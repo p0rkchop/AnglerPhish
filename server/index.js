@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/phishfry')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/anglerphish')
   .then(async () => {
     logger.info('Connected to MongoDB successfully');
     // Initialize app (create admin user, etc.)

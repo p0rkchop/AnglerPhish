@@ -46,7 +46,7 @@ const Layout = ({ children }) => {
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            🎣 Phishfry - Admin Dashboard
+            🎣 AnglerPhish - Admin Dashboard
           </Typography>
           <Typography variant="body2" sx={{ mr: 2 }}>
             {user?.email}

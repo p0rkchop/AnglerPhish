@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Phishfry is a gamified phishing email submission system that allows organizations to encourage employees to report suspicious emails by earning points for successful submissions. This is a defensive security tool designed to improve organizational security awareness.
+AnglerPhish is a gamified phishing email submission system that allows organizations to encourage employees to report suspicious emails by earning points for successful submissions. This is a defensive security tool designed to improve organizational security awareness.
 
 **Current Status**: This repository currently contains only requirements documentation. No code implementation exists yet.
 
@@ -40,7 +40,7 @@ Based on the requirements document, the system will use:
 ## Email Configuration
 
 The system is designed to work with Gmail:
-- **Submission Email**: phishfry25@gmail.com
+- **Submission Email**: anglerphish25@gmail.com
 - **IMAP Server**: imap.gmail.com (port 993, TLS)
 - **SMTP Server**: smtp.gmail.com (port 587, TLS)
 

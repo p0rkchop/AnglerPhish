@@ -265,7 +265,7 @@ const Config = () => {
                       Submission Email
                     </Typography>
                     <Typography variant="body1">
-                      phishfry25@gmail.com
+                      anglerphish25@gmail.com
                     </Typography>
                   </Grid>
                 </Grid>

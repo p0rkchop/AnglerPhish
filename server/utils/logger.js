@@ -15,7 +15,7 @@ const logger = winston.createLogger({
     winston.format.errors({ stack: true }),
     winston.format.json()
   ),
-  defaultMeta: { service: 'phishfry' },
+  defaultMeta: { service: 'anglerphish' },
   transports: [
     new winston.transports.File({ 
       filename: path.join(logsDir, 'error.log'), 

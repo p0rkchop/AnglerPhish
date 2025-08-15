@@ -257,14 +257,14 @@ class EmailService {
       const mailOptions = {
         from: process.env.SMTP_USER,
         to: recipient,
-        subject: 'Phishfry - Email Submission Received',
+        subject: 'AnglerPhish - Email Submission Received',
         html: `
           <h2>Thank you for your submission!</h2>
           <p>We have received your suspicious email submission and it has been forwarded to our security team for review.</p>
           <p>Your contribution helps keep our organization safe from phishing attacks.</p>
           <p>You will receive points once your submission has been reviewed and scored.</p>
           <br>
-          <p>Best regards,<br>Phishfry Security Team</p>
+          <p>Best regards,<br>AnglerPhish Security Team</p>
         `
       };
 

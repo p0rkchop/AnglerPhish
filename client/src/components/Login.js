@@ -48,7 +48,7 @@ const Login = () => {
             }}
           >
             <Typography component="h1" variant="h4" gutterBottom>
-              🎣 Phishfry
+              🎣 AnglerPhish
             </Typography>
             <Typography variant="h6" color="text.secondary" gutterBottom>
               Admin Login
@@ -100,7 +100,7 @@ const Login = () => {
         
         <Box sx={{ mt: 2, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            Default admin: admin@phishfry.com / admin123
+            Default admin: admin@anglerphish.com / admin123
           </Typography>
         </Box>
       </Box>

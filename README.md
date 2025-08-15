@@ -1,10 +1,10 @@
-# 🎣 Phishfry
+# 🎣 AnglerPhish
 
 A gamified phishing email submission system that allows organizations to encourage employees to report suspicious emails by earning points for successful submissions.
 
 ## Overview
 
-Phishfry is a defensive security tool designed to improve organizational security awareness by:
+AnglerPhish is a defensive security tool designed to improve organizational security awareness by:
 - Providing a simple way for users to submit suspicious emails
 - Gamifying the process with scoring to encourage participation  
 - Giving administrators tools to review and score submissions
@@ -38,7 +38,7 @@ Phishfry is a defensive security tool designed to improve organizational securit
 
 ```bash
 git clone <repository-url>
-cd Phishfry
+cd AnglerPhish
 cp .env.example .env
 ```
 
@@ -54,7 +54,7 @@ SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 
 # Admin User (optional - defaults provided)
-ADMIN_EMAIL=admin@phishfry.com
+ADMIN_EMAIL=admin@anglerphish.com
 ADMIN_PASSWORD=admin123
 
 # JWT Secret (generate a secure random string)
@@ -76,7 +76,7 @@ The application will be available at `http://localhost:5000`
 ### 4. Login
 
 - **URL**: `http://localhost:5000`
-- **Default Admin**: `admin@phishfry.com` / `admin123`
+- **Default Admin**: `admin@anglerphish.com` / `admin123`
 
 ## Development Setup
 
@@ -109,7 +109,7 @@ npm run dev
 ## Usage
 
 ### For End Users
-1. Forward suspicious emails to the configured email address (e.g., phishfry25@gmail.com)
+1. Forward suspicious emails to the configured email address (e.g., anglerphish25@gmail.com)
 2. Receive automatic acknowledgment email
 3. Wait for admin to review and score the submission
 

@@ -77,7 +77,7 @@ router.post('/create-admin', async (req, res) => {
     }
     
     const admin = new User({
-      email: email || process.env.ADMIN_EMAIL || 'admin@phishfry.com',
+      email: email || process.env.ADMIN_EMAIL || 'admin@anglerphish.com',
       password: password || process.env.ADMIN_PASSWORD || 'admin123',
       role: 'Administrator'
     });

@@ -1,5 +1,5 @@
 {
-  "name": "phishfry",
+  "name": "anglerphish",
   "version": "0.1.0",
   "description": "A gamified phishing email submission system",
   "main": "server/index.js",
@@ -35,6 +35,6 @@
     "concurrently": "^8.2.0"
   },
   "keywords": ["phishing", "security", "email", "gamification"],
-  "author": "Phishfry Team",
+  "author": "AnglerPhish Team",
   "license": "MIT"
 }

@@ -9,7 +9,7 @@ const initializeApp = async () => {
     if (!existingAdmin) {
       // Create default admin user
       const adminUser = new User({
-        email: process.env.ADMIN_EMAIL || 'admin@phishfry.com',
+        email: process.env.ADMIN_EMAIL || 'admin@anglerphish.com',
         password: process.env.ADMIN_PASSWORD || 'admin123',
         role: 'Administrator'
       });
