@@ -11,8 +11,22 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
+    // Input validation
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
+    }
+    
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ error: 'Invalid input format' });
+    }
+    
+    if (email.length > 254 || password.length > 128) {
+      return res.status(400).json({ error: 'Input too long' });
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
     }
     
     // Find user

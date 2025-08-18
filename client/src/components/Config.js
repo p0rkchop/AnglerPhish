@@ -17,7 +17,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
   Refresh as RefreshIcon,
-  Health as HealthIcon
+  MonitorHeart as HealthIcon
 } from '@mui/icons-material';
 import Layout from './Layout';
 import configService from '../services/configService';

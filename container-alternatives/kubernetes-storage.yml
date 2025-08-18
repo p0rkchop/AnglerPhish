@@ -1,0 +1,112 @@
+# Persistent Volume Claims for AnglerPhish on Kubernetes
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: anglerphish-uploads-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: anglerphish-logs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: standard
+
+---
+# ConfigMaps and Secrets
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: anglerphish-config
+data:
+  admin-email: "admin@anglerphish.local"
+  imap-host: "imap.gmail.com"
+  imap-port: "993"
+  smtp-host: "smtp.gmail.com" 
+  smtp-port: "587"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: anglerphish-secrets
+type: Opaque
+data:
+  jwt-secret: eW91cl9zdXBlcl9zZWNyZXRfand0X2tleV9jaGFuZ2VfdGhpc19pbl9wcm9kdWN0aW9uXzIwMjQ=  # base64 encoded
+  admin-password: U2VjdXJlQWRtaW5QYXNzd29yZDEyMyE=  # base64 encoded
+  imap-user: eW91cl9lbWFpbEBnbWFpbC5jb20=  # base64 encoded
+  imap-pass: eW91cl9nbWFpbF9hcHBfcGFzc3dvcmQ=  # base64 encoded
+  smtp-user: eW91cl9lbWFpbEBnbWFpbC5jb20=  # base64 encoded
+  smtp-pass: eW91cl9nbWFpbF9hcHBfcGFzc3dvcmQ=  # base64 encoded
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secrets
+type: Opaque
+data:
+  root-username: YWRtaW4=  # base64 encoded "admin"
+  root-password: cGFzc3dvcmQxMjM=  # base64 encoded "password123"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-init-script
+data:
+  mongo-init.js: |
+    // MongoDB initialization script for AnglerPhish
+    db = db.getSiblingDB('anglerphish');
+
+    // Create application user
+    db.createUser({
+      user: 'anglerphish_user',
+      pwd: 'anglerphish_password_change_in_production',
+      roles: [
+        {
+          role: 'readWrite',
+          db: 'anglerphish'
+        }
+      ]
+    });
+
+    // Create indexes
+    db.createCollection('users');
+    db.users.createIndex({ "email": 1 }, { unique: true });
+    db.users.createIndex({ "role": 1 });
+
+    db.createCollection('submissions');
+    db.submissions.createIndex({ "submissionId": 1 }, { unique: true });
+    db.submissions.createIndex({ "status": 1, "receivedAt": -1 });
+    db.submissions.createIndex({ "senderEmail": 1 });
+
+    db.createCollection('configs');
+    db.configs.createIndex({ "key": 1 }, { unique: true });
+
+    print('MongoDB initialization completed for AnglerPhish database');

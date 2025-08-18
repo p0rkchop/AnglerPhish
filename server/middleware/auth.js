@@ -25,18 +25,18 @@ const auth = async (req, res, next) => {
   }
 };
 
-const adminAuth = async (req, res, next) => {
-  try {
-    await auth(req, res, () => {
-      if (req.user.role !== 'Administrator') {
-        return res.status(403).json({ error: 'Access denied. Administrator role required.' });
-      }
-      next();
-    });
-  } catch (error) {
-    logger.error('Admin authentication error:', error);
-    res.status(403).json({ error: 'Access denied.' });
-  }
+const adminAuth = (req, res, next) => {
+  auth(req, res, (authError) => {
+    if (authError) {
+      return next(authError);
+    }
+    
+    if (req.user.role !== 'Administrator') {
+      return res.status(403).json({ error: 'Access denied. Administrator role required.' });
+    }
+    
+    next();
+  });
 };
 
 module.exports = { auth, adminAuth };

@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import SubmissionDetail from './components/SubmissionDetail';
 import Config from './components/Config';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const theme = createTheme({
   palette: {
@@ -23,38 +24,40 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <SubmissionProvider>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/submission/:id" element={
-                <ProtectedRoute>
-                  <SubmissionDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="/config" element={
-                <ProtectedRoute>
-                  <Config />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </Router>
-        </SubmissionProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
+          <SubmissionProvider>
+            <Router>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/submission/:id" element={
+                  <ProtectedRoute>
+                    <SubmissionDetail />
+                  </ProtectedRoute>
+                } />
+                <Route path="/config" element={
+                  <ProtectedRoute>
+                    <Config />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </Router>
+          </SubmissionProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

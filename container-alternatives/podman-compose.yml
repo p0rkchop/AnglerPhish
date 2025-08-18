@@ -3,10 +3,10 @@ version: '3.8'
 services:
   app:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
       target: production
-    container_name: anglerphish-app
+    container_name: anglerphish-app-podman
     restart: unless-stopped
     ports:
       - "${PORT:-5000}:5000"
@@ -34,22 +34,16 @@ services:
       - logs_data:/usr/src/app/logs
     networks:
       - anglerphish-network
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/config/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
   mongo:
-    image: mongo:5-focal
-    container_name: anglerphish-mongo
+    image: docker.io/mongo:5-focal
+    container_name: anglerphish-mongo-podman
     restart: unless-stopped
     ports:
       - "${MONGO_PORT:-27017}:27017"
     volumes:
       - mongo_data:/data/db
-      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ../docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
       - MONGO_INITDB_DATABASE=anglerphish
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}

@@ -22,7 +22,7 @@ class EmailService {
       tlsOptions: { rejectUnauthorized: false }
     };
 
-    this.smtpTransporter = nodemailer.createTransporter({
+    this.smtpTransporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: process.env.SMTP_SECURE === 'true',
@@ -85,7 +85,9 @@ class EmailService {
                   });
 
                   // Send acknowledgment email
-                  await this.sendAcknowledgment(parsed.from.text);
+                  if (parsed.from && parsed.from.text) {
+                    await this.sendAcknowledgment(parsed.from.text);
+                  }
                 } catch (error) {
                   logger.error('Error processing email:', error);
                 }
@@ -245,14 +247,21 @@ class EmailService {
   }
 
   extractEmailAddress(fromText) {
+    if (!fromText || typeof fromText !== 'string') {
+      return null;
+    }
     const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/;
     const match = fromText.match(emailRegex);
-    return match ? match[1] : fromText;
+    return match ? match[1] : fromText.trim();
   }
 
   async sendAcknowledgment(recipientEmail) {
     try {
       const recipient = this.extractEmailAddress(recipientEmail);
+      if (!recipient) {
+        logger.warn('Cannot send acknowledgment: invalid recipient email');
+        return;
+      }
       
       const mailOptions = {
         from: process.env.SMTP_USER,

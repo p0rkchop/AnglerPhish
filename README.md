@@ -28,6 +28,68 @@ AnglerPhish is a defensive security tool designed to improve organizational secu
 
 ## Quick Start
 
+### 🐳 Docker Deployment (Recommended)
+
+The easiest way to run AnglerPhish is with Docker. **This project uses build-time dependency installation** - no `node_modules` directories exist in the repository.
+
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd AnglerPhish
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your configuration (see DOCKER_DEPLOYMENT.md for details)
+
+# 3. Build and start (dependencies downloaded during build)
+docker-compose up -d --build
+
+# 4. Access the application
+# Web interface: http://localhost:5000
+# Admin login: Use credentials from your .env file
+```
+
+**🚨 IMPORTANT**: Do NOT run `npm install` manually. All dependencies are automatically downloaded during the Docker build process for optimal security and cross-platform compatibility.
+
+For detailed Docker deployment instructions, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md).
+
+**📦 Container Alternatives**: Don't have Docker? AnglerPhish also works with Podman, Buildah, nerdctl, Lima, and Kubernetes. See [CONTAINER_ALTERNATIVES.md](CONTAINER_ALTERNATIVES.md) for complete instructions.
+
+### 🛠 Manual Development Setup
+
+**⚠️ Note**: For development without Docker, you'll need to install dependencies manually since they're not included in the repository:
+
+```bash
+# Install backend dependencies
+npm install
+
+# Install frontend dependencies
+cd client && npm install
+
+# Start development servers
+npm run dev  # Starts both backend and frontend
+```
+
+## 🏗 Build-Time Dependency Installation
+
+This project follows modern containerization best practices:
+
+- **No `node_modules` in Git**: Dependencies are not committed to the repository
+- **Fresh installs**: Dependencies are downloaded during Docker build for security
+- **Cross-platform**: No platform-specific binaries causing compatibility issues
+- **Reproducible**: Uses `package-lock.json` for exact version resolution
+- **Efficient**: Docker layer caching optimizes rebuild times
+
+### Why This Approach?
+
+| Traditional (❌) | Build-Time (✅) |
+|-----------------|----------------|
+| 600MB+ node_modules in Git | Clean repository ~50MB |
+| Platform-specific binaries | Works on any Docker platform |
+| Stale/vulnerable packages | Fresh downloads with patches |
+| Slow Git operations | Fast clone/pull operations |
+| Manual dependency management | Automated during build |
+
 ### Prerequisites
 
 - Docker and Docker Compose

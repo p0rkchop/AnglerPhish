@@ -10,32 +10,40 @@ router.get('/', adminAuth, async (req, res) => {
   try {
     const { status = 'To-Do', page = 1, limit = 20 } = req.query;
     
+    // Input validation
+    const validStatuses = ['To-Do', 'Done', 'all'];
+    if (status !== 'all' && !validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+    
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    
+    if (isNaN(pageNum) || pageNum < 1 || pageNum > 10000) {
+      return res.status(400).json({ error: 'Invalid page number' });
+    }
+    
+    if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+      return res.status(400).json({ error: 'Invalid limit value (1-100 allowed)' });
+    }
+    
     const query = status === 'all' ? {} : { status };
-    const options = {
-      page: parseInt(page),
-      limit: parseInt(limit),
-      sort: { receivedAt: -1 },
-      populate: {
-        path: 'scoredBy',
-        select: 'email'
-      }
-    };
     
     const submissions = await Submission.find(query)
       .populate('scoredBy', 'email')
       .sort({ receivedAt: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
+      .limit(limitNum)
+      .skip((pageNum - 1) * limitNum);
     
     const total = await Submission.countDocuments(query);
     
     res.json({
       submissions,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: pageNum,
+        limit: limitNum,
         total,
-        pages: Math.ceil(total / parseInt(limit))
+        pages: Math.ceil(total / limitNum)
       }
     });
   } catch (error) {
@@ -47,6 +55,11 @@ router.get('/', adminAuth, async (req, res) => {
 // Get submission by ID (admin only)
 router.get('/:id', adminAuth, async (req, res) => {
   try {
+    // Validate submission ID format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: 'Invalid submission ID format' });
+    }
+    
     const submission = await Submission.findById(req.params.id)
       .populate('scoredBy', 'email');
     
@@ -66,8 +79,30 @@ router.post('/:id/score', adminAuth, async (req, res) => {
   try {
     const { score, notes } = req.body;
     
-    if (score === undefined || score < 0 || score > 100) {
+    // Input validation
+    if (score === undefined || score === null) {
+      return res.status(400).json({ error: 'Score is required' });
+    }
+    
+    if (typeof score !== 'number' || isNaN(score)) {
+      return res.status(400).json({ error: 'Score must be a valid number' });
+    }
+    
+    if (score < 0 || score > 100) {
       return res.status(400).json({ error: 'Score must be between 0 and 100' });
+    }
+    
+    if (notes && typeof notes !== 'string') {
+      return res.status(400).json({ error: 'Notes must be a string' });
+    }
+    
+    if (notes && notes.length > 1000) {
+      return res.status(400).json({ error: 'Notes must be less than 1000 characters' });
+    }
+    
+    // Validate submission ID format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: 'Invalid submission ID format' });
     }
     
     const submission = await Submission.findById(req.params.id);

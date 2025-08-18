@@ -1,0 +1,195 @@
+# Kubernetes Job for building AnglerPhish image using BuildKit
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: anglerphish-build
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+      - name: buildkit
+        image: moby/buildkit:latest
+        command:
+        - buildctl
+        - build
+        - --frontend
+        - dockerfile.v0
+        - --local
+        - context=/workspace
+        - --local
+        - dockerfile=/workspace
+        - --output
+        - type=image,name=anglerphish:latest,push=false
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+        securityContext:
+          privileged: true
+      volumes:
+      - name: workspace
+        hostPath:
+          path: /path/to/anglerphish  # Update this path
+          type: Directory
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+      restartPolicy: Never
+  backoffLimit: 3
+
+---
+# Kubernetes Deployment for AnglerPhish
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anglerphish-app
+  labels:
+    app: anglerphish
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anglerphish
+  template:
+    metadata:
+      labels:
+        app: anglerphish
+    spec:
+      containers:
+      - name: anglerphish
+        image: anglerphish:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: MONGODB_URI
+          value: "mongodb://mongodb-service:27017/anglerphish"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: anglerphish-secrets
+              key: jwt-secret
+        - name: ADMIN_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: anglerphish-config
+              key: admin-email
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: anglerphish-secrets
+              key: admin-password
+        volumeMounts:
+        - name: uploads
+          mountPath: /usr/src/app/uploads
+        - name: logs
+          mountPath: /usr/src/app/logs
+        livenessProbe:
+          httpGet:
+            path: /api/config/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/config/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: uploads
+        persistentVolumeClaim:
+          claimName: anglerphish-uploads-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: anglerphish-logs-pvc
+
+---
+# MongoDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:5-focal
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_DATABASE
+          value: "anglerphish"
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secrets
+              key: root-username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secrets
+              key: root-password
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+        command: ["mongod", "--auth"]
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: mongodb-data
+        persistentVolumeClaim:
+          claimName: mongodb-data-pvc
+      - name: init-script
+        configMap:
+          name: mongodb-init-script
+
+---
+# Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: anglerphish-service
+spec:
+  selector:
+    app: anglerphish
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017

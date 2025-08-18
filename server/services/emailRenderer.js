@@ -89,18 +89,37 @@ class EmailRenderer {
   }
 
   sanitizeHtml(html) {
-    // Basic HTML sanitization to prevent XSS and ensure proper rendering
+    // Enhanced HTML sanitization to prevent XSS and ensure proper rendering
     if (!html) return '';
     
-    // Remove script tags
+    // Remove script tags and their content
     html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
     
-    // Remove potentially dangerous attributes
-    html = html.replace(/\s(on\w+)="[^"]*"/gi, '');
-    html = html.replace(/\s(on\w+)='[^']*'/gi, '');
+    // Remove style tags that could contain malicious CSS
+    html = html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
     
-    // Convert relative URLs to prevent loading issues
-    html = html.replace(/src="\/([^"]*)"/, 'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"');
+    // Remove potentially dangerous tags
+    const dangerousTags = ['object', 'embed', 'applet', 'iframe', 'frame', 'frameset', 'base', 'meta', 'link'];
+    dangerousTags.forEach(tag => {
+      const regex = new RegExp(`<${tag}\\b[^>]*>.*?<\\/${tag}>`, 'gi');
+      html = html.replace(regex, '');
+      const selfClosing = new RegExp(`<${tag}\\b[^>]*\\/?>`, 'gi');
+      html = html.replace(selfClosing, '');
+    });
+    
+    // Remove all event handlers (onclick, onload, etc.)
+    html = html.replace(/\s(on\w+)\s*=\s*["'][^"']*["']/gi, '');
+    html = html.replace(/\s(on\w+)\s*=\s*[^>\s]+/gi, '');
+    
+    // Remove javascript: URLs
+    html = html.replace(/javascript\s*:/gi, 'blocked:');
+    
+    // Remove data: URLs that could contain scripts
+    html = html.replace(/data\s*:\s*text\/html/gi, 'blocked:text/html');
+    
+    // Convert relative URLs and external images to placeholder
+    html = html.replace(/src\s*=\s*["']\/[^"']*["']/gi, 'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"');
+    html = html.replace(/src\s*=\s*["']https?:\/\/[^"']*["']/gi, 'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"');
     
     return html;
   }

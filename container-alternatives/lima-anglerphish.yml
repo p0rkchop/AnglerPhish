@@ -1,0 +1,95 @@
+# Lima configuration for AnglerPhish development
+# Usage: limactl start lima-anglerphish.yml
+
+# VM type
+vmType: "qemu"
+
+# OS
+images:
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+  arch: "x86_64"
+  digest: "sha256:8a814bf2057aba84b3b4b0e4a8b4b0f0d0b0e3f0f3b4b0e4a8b4b0f0d0b0e3f0"
+
+# CPU and Memory
+cpus: 4
+memory: "4GiB"
+disk: "100GiB"
+
+# Mounts (project directory will be available in VM)
+mounts:
+- location: "."
+  mountPoint: "/home/user.linux/anglerphish"
+- location: "/tmp/lima"
+  mountPoint: "/tmp/host"
+  writable: true
+
+# SSH settings
+ssh:
+  localPort: 60022
+  loadDotSSHPubKeys: true
+
+# Port forwarding for AnglerPhish services
+portForwards:
+- guestPort: 5000
+  hostPort: 5000
+  proto: tcp
+- guestPort: 27017
+  hostPort: 27017
+  proto: tcp
+- guestPort: 3000
+  hostPort: 3000
+  proto: tcp
+
+# Provision script to install container tools
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    
+    # Update system
+    apt-get update
+    apt-get install -y curl wget git build-essential
+    
+    # Install Node.js 18
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    apt-get install -y nodejs
+    
+    # Install Docker
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+    usermod -aG docker user.linux
+    systemctl enable docker
+    systemctl start docker
+    
+    # Install Docker Compose
+    curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    
+    # Install Podman
+    apt-get install -y podman podman-compose
+    
+    # Install containerd and nerdctl
+    wget https://github.com/containerd/nerdctl/releases/download/v1.5.0/nerdctl-1.5.0-linux-amd64.tar.gz
+    tar Cxzvf /usr/local/bin nerdctl-1.5.0-linux-amd64.tar.gz
+    
+    # Create anglerphish directory
+    mkdir -p /home/user.linux/anglerphish
+    chown user.linux:user.linux /home/user.linux/anglerphish
+
+- mode: user
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    
+    # Add user to docker group
+    sudo usermod -aG docker $USER
+    
+    # Set up environment
+    cd /home/user.linux/anglerphish
+    
+    echo "Lima VM configured for AnglerPhish development!"
+    echo "Available container tools:"
+    echo "- Docker: docker --version"
+    echo "- Podman: podman --version" 
+    echo "- nerdctl: nerdctl --version"

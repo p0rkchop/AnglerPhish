@@ -98,11 +98,13 @@ const Login = () => {
           </Box>
         </Paper>
         
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            Default admin: admin@anglerphish.com / admin123
-          </Typography>
-        </Box>
+        {process.env.NODE_ENV === 'development' && (
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Development Mode - Check .env file for admin credentials
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Container>
   );
