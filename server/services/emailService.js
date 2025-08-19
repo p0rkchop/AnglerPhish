@@ -1,18 +1,23 @@
-const Imap = require('imap');
-const nodemailer = require('nodemailer');
-const { simpleParser } = require('mailparser');
-const cheerio = require('cheerio');
-const urlParse = require('url-parse');
-const fs = require('fs').promises;
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+// Email processing service for AnglerPhish defensive security system
+// Handles IMAP email retrieval, parsing, URL extraction, and automated responses
 
-const Submission = require('../models/Submission');
-const logger = require('../utils/logger');
-const emailRenderer = require('./emailRenderer');
+const Imap = require('imap'); // IMAP client for reading emails
+const nodemailer = require('nodemailer'); // SMTP client for sending responses
+const { simpleParser } = require('mailparser'); // Email parsing library
+const cheerio = require('cheerio'); // HTML parsing for URL extraction
+const urlParse = require('url-parse'); // URL parsing utilities
+const fs = require('fs').promises; // Asynchronous file system operations
+const path = require('path'); // File path utilities
+const { v4: uuidv4 } = require('uuid'); // UUID generation for unique identifiers
 
+const Submission = require('../models/Submission'); // Database model for email submissions
+const logger = require('../utils/logger'); // Centralized logging utility
+const emailRenderer = require('./emailRenderer'); // Email-to-image rendering service
+
+// Main email processing service class - core of the defensive security system
 class EmailService {
   constructor() {
+    // IMAP configuration for connecting to email server (Gmail by default)
     this.imapConfig = {
       user: process.env.IMAP_USER,
       password: process.env.IMAP_PASS,

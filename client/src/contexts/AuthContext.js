@@ -1,7 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import authService from '../services/authService';
-
-const AuthContext = createContext();
+// Authentication context for AnglerPhish defensive security system\n// Manages user authentication state, login/logout, and token persistence\n\nimport React, { createContext, useContext, useReducer, useEffect } from 'react'; // React context and hooks\nimport authService from '../services/authService'; // Authentication API service\n\n// Create React context for sharing authentication state across components\nconst AuthContext = createContext();
 
 const initialState = {
   user: null,

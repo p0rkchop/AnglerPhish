@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+// Login component for AnglerPhish defensive security system
+// Provides authentication interface for administrators to access the system
+
+import React, { useState, useEffect } from 'react'; // React hooks for state management
+import { Navigate } from 'react-router-dom'; // Navigation component for redirects
 import {
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  Container
+  Box,        // Flexible container component
+  Paper,      // Material design paper surface
+  TextField,  // Text input component
+  Button,     // Action button component
+  Typography, // Text styling component
+  Alert,      // Alert/notification component
+  Container   // Layout container component
 } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext'; // Authentication context hook
 
 const Login = () => {
   const [email, setEmail] = useState('');

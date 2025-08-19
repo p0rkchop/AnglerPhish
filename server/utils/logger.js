@@ -1,11 +1,14 @@
-const winston = require('winston');
-const path = require('path');
+// Centralized logging utility for AnglerPhish defensive security system
+// Provides structured logging with file output and console display for development
 
-// Create logs directory if it doesn't exist
+const winston = require('winston'); // Professional logging library
+const path = require('path'); // File path utilities
+
+// Ensure logs directory exists for file output
 const fs = require('fs');
 const logsDir = path.join(__dirname, '../../logs');
 if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
+  fs.mkdirSync(logsDir, { recursive: true }); // Create directory recursively
 }
 
 const logger = winston.createLogger({

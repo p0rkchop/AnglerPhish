@@ -1,9 +1,13 @@
-const express = require('express');
-const Config = require('../models/Config');
-const { adminAuth } = require('../middleware/auth');
-const emailService = require('../services/emailService');
-const logger = require('../utils/logger');
+// Configuration routes for AnglerPhish defensive security system
+// Handles system settings management for email processing and notifications
 
+const express = require('express'); // Web framework
+const Config = require('../models/Config'); // Configuration model for database operations
+const { adminAuth } = require('../middleware/auth'); // Admin authentication middleware  
+const emailService = require('../services/emailService'); // Email processing service
+const logger = require('../utils/logger'); // Centralized logging utility
+
+// Create Express router for configuration endpoints
 const router = express.Router();
 
 // Get all configuration settings (admin only)
