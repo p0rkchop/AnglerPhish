@@ -86,7 +86,7 @@ class EmailService {
                   
                   // Mark email as seen
                   imap.addFlags(seqno, ['\\Seen'], (err) => {
-                    if (err) logger.error('Error marking email as seen:', err);
+                    if (err) {logger.error('Error marking email as seen:', err);}
                   });
 
                   // Send acknowledgment email
@@ -172,7 +172,7 @@ class EmailService {
   }
 
   extractUrls(content) {
-    if (!content) return [];
+    if (!content) {return [];}
     
     const urls = new Set();
     

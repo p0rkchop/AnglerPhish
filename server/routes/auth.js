@@ -6,36 +6,18 @@ const jwt = require('jsonwebtoken'); // JSON Web Token library for secure authen
 const User = require('../models/User'); // User model for database operations
 const { auth } = require('../middleware/auth'); // Authentication middleware
 const logger = require('../utils/logger'); // Centralized logging utility
+const { authLimiter } = require('../middleware/security'); // Stricter rate limiting for auth
+const { validateLogin } = require('../middleware/validation'); // Input validation
 
 // Create Express router for authentication endpoints
 const router = express.Router();
 
 // POST /api/auth/login - Authenticate user and return JWT token
 // This endpoint validates user credentials and creates a session token
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
-    
-    // Comprehensive input validation for security
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-    
-    // Type validation to prevent injection attacks
-    if (typeof email !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: 'Invalid input format' });
-    }
-    
-    // Length validation to prevent buffer overflow attacks
-    if (email.length > 254 || password.length > 128) {
-      return res.status(400).json({ error: 'Input too long' });
-    }
-    
-    // Email format validation using regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
+    // Input validation is now handled by validateLogin middleware
     
     // Find user in database (case-insensitive email lookup)
     const user = await User.findOne({ email: email.toLowerCase() });

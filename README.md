@@ -1,4 +1,4 @@
-# 🎣 AnglerPhish
+# AnglerPhish
 
 A gamified phishing email submission system that allows organizations to encourage employees to report suspicious emails by earning points for successful submissions.
 
@@ -28,7 +28,7 @@ AnglerPhish is a defensive security tool designed to improve organizational secu
 
 ## Quick Start
 
-### 🐳 Docker Deployment (Recommended)
+### Docker Deployment (Recommended)
 
 The easiest way to run AnglerPhish is with Docker. **This project uses build-time dependency installation** - no `node_modules` directories exist in the repository.
 
@@ -49,15 +49,15 @@ docker-compose up -d --build
 # Admin login: Use credentials from your .env file
 ```
 
-**🚨 IMPORTANT**: Do NOT run `npm install` manually. All dependencies are automatically downloaded during the Docker build process for optimal security and cross-platform compatibility.
+**IMPORTANT**: Do NOT run `npm install` manually. All dependencies are automatically downloaded during the Docker build process for optimal security and cross-platform compatibility.
 
 For detailed Docker deployment instructions, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md).
 
-**📦 Container Alternatives**: Don't have Docker? AnglerPhish also works with Podman, Buildah, nerdctl, Lima, and Kubernetes. See [CONTAINER_ALTERNATIVES.md](CONTAINER_ALTERNATIVES.md) for complete instructions.
+**Container Alternatives**: Don't have Docker? AnglerPhish also works with Podman, Buildah, nerdctl, Lima, and Kubernetes. See [CONTAINER_ALTERNATIVES.md](CONTAINER_ALTERNATIVES.md) for complete instructions.
 
-### 🛠 Manual Development Setup
+### Manual Development Setup
 
-**⚠️ Note**: For development without Docker, you'll need to install dependencies manually since they're not included in the repository:
+**Note**: For development without Docker, you'll need to install dependencies manually since they're not included in the repository:
 
 ```bash
 # Install backend dependencies
@@ -70,7 +70,7 @@ cd client && npm install
 npm run dev  # Starts both backend and frontend
 ```
 
-## 🏗 Build-Time Dependency Installation
+## Build-Time Dependency Installation
 
 This project follows modern containerization best practices:
 

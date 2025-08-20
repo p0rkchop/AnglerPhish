@@ -82,8 +82,25 @@ router.post('/check-emails', adminAuth, async (req, res) => {
   }
 });
 
-// Get system health status (admin only)
-router.get('/health', adminAuth, async (req, res) => {
+// Get basic system health status (public endpoint for Docker health checks)
+router.get('/health', async (req, res) => {
+  try {
+    const health = {
+      status: 'healthy',
+      timestamp: new Date(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development'
+    };
+    
+    res.json(health);
+  } catch (error) {
+    logger.error('Error checking health:', error);
+    res.status(500).json({ status: 'unhealthy', error: 'Server error' });
+  }
+});
+
+// Get detailed system health status (admin only)
+router.get('/health/detailed', adminAuth, async (req, res) => {
   try {
     const health = {
       database: 'connected',
@@ -104,7 +121,7 @@ router.get('/health', adminAuth, async (req, res) => {
     
     res.json(health);
   } catch (error) {
-    logger.error('Error checking health:', error);
+    logger.error('Error checking detailed health:', error);
     res.status(500).json({ error: 'Server error checking health' });
   }
 });

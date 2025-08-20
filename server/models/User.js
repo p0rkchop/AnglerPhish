@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
 // This ensures passwords are never stored in plain text for security
 userSchema.pre('save', async function(next) {
   // Only hash the password if it has been modified (new user or password change)
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {return next();}
   
   try {
     // Generate a salt with complexity factor of 10 (good balance of security vs performance)

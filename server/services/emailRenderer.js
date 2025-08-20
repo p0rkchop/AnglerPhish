@@ -90,7 +90,7 @@ class EmailRenderer {
 
   sanitizeHtml(html) {
     // Enhanced HTML sanitization to prevent XSS and ensure proper rendering
-    if (!html) return '';
+    if (!html) {return '';}
     
     // Remove script tags and their content
     html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');

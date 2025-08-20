@@ -16,6 +16,8 @@ const authRoutes = require('./routes/auth'); // Authentication API routes
 const submissionRoutes = require('./routes/submissions'); // Email submission routes
 const configRoutes = require('./routes/config'); // System configuration routes
 const emailService = require('./services/emailService'); // Email processing service
+const { helmetConfig, generalLimiter, securityLogger } = require('./middleware/security'); // Security middleware
+const { sanitizeInput } = require('./middleware/validation'); // Input validation and sanitization
 
 // Load environment variables from .env file for configuration
 dotenv.config();
@@ -26,6 +28,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Configure middleware for security and request processing
+// Apply security headers first
+app.use(helmetConfig);
+
+// Apply rate limiting to all requests
+app.use(generalLimiter);
+
+// Security logging for suspicious requests
+app.use(securityLogger);
+
+// Input sanitization to prevent XSS
+app.use(sanitizeInput);
+
 // CORS configuration to allow frontend access from specific origins
 const corsOptions = {
   // Allow different origins based on environment (production vs development)
