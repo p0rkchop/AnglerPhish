@@ -9,7 +9,7 @@ WORKDIR /app/client
 COPY client/package*.json ./
 
 # Install frontend dependencies
-RUN npm ci --only=production --silent
+RUN npm ci --silent
 
 # Copy frontend source code
 COPY client/ ./
