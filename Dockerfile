@@ -1,7 +1,7 @@
 # ==============================================================================
 # Build Stage - Frontend
 # ==============================================================================
-FROM node:18-alpine AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/client
 
@@ -20,7 +20,7 @@ RUN npm run build
 # ==============================================================================
 # Build Stage - Backend Dependencies
 # ==============================================================================
-FROM node:18-alpine AS backend-builder
+FROM node:20-alpine AS backend-builder
 
 WORKDIR /app
 
@@ -33,7 +33,7 @@ RUN npm ci --silent
 # ==============================================================================
 # Production Stage
 # ==============================================================================
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Install Chrome dependencies for Puppeteer in production
 RUN apk add --no-cache \
