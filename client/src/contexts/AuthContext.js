@@ -1,4 +1,11 @@
-// Authentication context for AnglerPhish defensive security system\n// Manages user authentication state, login/logout, and token persistence\n\nimport React, { createContext, useContext, useReducer, useEffect } from 'react'; // React context and hooks\nimport authService from '../services/authService'; // Authentication API service\n\n// Create React context for sharing authentication state across components\nconst AuthContext = createContext();
+// Authentication context for AnglerPhish defensive security system
+// Manages user authentication state, login/logout, and token persistence
+
+import React, { createContext, useContext, useReducer, useEffect } from 'react'; // React context and hooks
+import authService from '../services/authService'; // Authentication API service
+
+// Create React context for sharing authentication state across components
+const AuthContext = createContext();
 
 const initialState = {
   user: null,
